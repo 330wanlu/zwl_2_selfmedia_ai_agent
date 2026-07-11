@@ -78,6 +78,36 @@ async def get_state_values(thread_id: str) -> dict:
     return dict(snapshot.values or {})
 
 
+async def get_state_history(thread_id: str) -> list[dict]:
+    """返回 checkpoint 历史（从新到旧），用于调试工作流走向。"""
+    history: list[dict] = []
+    async for snapshot in get_graph().aget_state_history(_thread_config(thread_id)):
+        history.append(
+            {
+                "checkpoint_id": snapshot.config.get("configurable", {}).get("checkpoint_id"),
+                "created_at": getattr(snapshot, "created_at", None),
+                "next": list(snapshot.next) if snapshot.next else [],
+                "has_interrupts": bool(snapshot.interrupts),
+                "interrupt_types": [
+                    (i.value or {}).get("type") for i in (snapshot.interrupts or [])
+                ],
+                "current_stage": (snapshot.values or {}).get("current_stage"),
+                "values_summary": {
+                    k: (v if not isinstance(v, str) or len(v) < 200 else v[:200] + "…")
+                    for k, v in (snapshot.values or {}).items()
+                    if k in (
+                        "direction",
+                        "topic_batch",
+                        "content_version",
+                        "revision_count",
+                        "current_stage",
+                    )
+                },
+            }
+        )
+    return history
+
+
 async def recover_running_tasks() -> None:
     """服务启动时恢复孤儿任务。
 

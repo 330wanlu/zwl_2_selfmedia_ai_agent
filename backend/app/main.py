@@ -55,10 +55,12 @@ async def health():
 
 
 from app.api.v1.decisions import router as decisions_router  # noqa: E402
+from app.api.v1.publish import router as publish_router  # noqa: E402
 from app.api.v1.tasks import router as tasks_router  # noqa: E402
 
 app.include_router(tasks_router)
 app.include_router(decisions_router)
+app.include_router(publish_router)
 
 if settings.debug:
     from app.api.debug import router as debug_router
