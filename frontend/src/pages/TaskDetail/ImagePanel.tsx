@@ -67,6 +67,7 @@ export default function ImagePanel({ taskId, pending, disabled, onSubmitted }: P
           <Col xs={24} sm={12} md={8} key={img.sequence}>
             <Card
               size="small"
+              className={`image-tile${selected.includes(img.sequence) ? ' is-selected' : ''}`}
               cover={
                 <Image
                   src={assetUrl(img.url)}

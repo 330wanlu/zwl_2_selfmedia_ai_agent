@@ -5,7 +5,6 @@ import {
   Card,
   Image,
   Space,
-  Spin,
   Tag,
   Typography,
   message,
@@ -106,8 +105,9 @@ export default function ContentPackagePage() {
 
   if (loading) {
     return (
-      <div style={{ textAlign: 'center', padding: 80 }}>
-        <Spin size="large" tip="加载内容包…" />
+      <div className="loading-screen">
+        <div className="loading-screen__orb" />
+        <div>加载内容包…</div>
       </div>
     )
   }
@@ -126,19 +126,24 @@ export default function ContentPackagePage() {
   const published = data.status === 'published'
 
   return (
-    <Space direction="vertical" size={20} style={{ width: '100%' }}>
-      <Space style={{ width: '100%', justifyContent: 'space-between' }} wrap>
-        <Space>
+    <div className="stack">
+      <div className="row-between">
+        <div className="row">
           <Link to={`/tasks/${taskId}`}>
             <Button icon={<ArrowLeftOutlined />}>返回详情</Button>
           </Link>
-          <Typography.Title level={3} style={{ margin: 0 }}>
-            小红书内容包
-          </Typography.Title>
+          <div>
+            <div className="page-hero__eyebrow" style={{ marginBottom: 4 }}>
+              Delivery Pack
+            </div>
+            <h1 className="page-hero__title" style={{ fontSize: 26, margin: 0 }}>
+              小红书内容包
+            </h1>
+          </div>
           <Tag color={published ? 'success' : 'default'}>
             {published ? '已发布' : '待发布'}
           </Tag>
-        </Space>
+        </div>
         <Space wrap>
           <Button icon={<CopyOutlined />} type="primary" onClick={() => void copyAll()}>
             一键复制文字
@@ -162,16 +167,14 @@ export default function ContentPackagePage() {
             {published ? '已标记发布' : '标记已发布'}
           </Button>
         </Space>
-      </Space>
+      </div>
 
       <Card title="标题" size="small">
-        <Typography.Title level={4} style={{ margin: 0 }}>
-          {pkg.title}
-        </Typography.Title>
+        <h2 className="package-title">{pkg.title}</h2>
       </Card>
 
       <Card title="正文" size="small">
-        <Typography.Paragraph style={{ whiteSpace: 'pre-wrap', marginBottom: 0 }}>
+        <Typography.Paragraph className="content-preview" style={{ marginBottom: 0 }}>
           {pkg.body}
         </Typography.Paragraph>
       </Card>
@@ -179,7 +182,7 @@ export default function ContentPackagePage() {
       <Card title="话题标签" size="small">
         <Space wrap>
           {(pkg.tags || []).map((t) => (
-            <Tag key={t} color="magenta">
+            <Tag key={t} className="tag-chip">
               #{t}
             </Tag>
           ))}
@@ -197,7 +200,11 @@ export default function ContentPackagePage() {
                   src={src}
                   width={160}
                   height={160}
-                  style={{ objectFit: 'cover', borderRadius: 8 }}
+                  style={{
+                    objectFit: 'cover',
+                    borderRadius: 10,
+                    border: '1px solid rgba(0, 229, 200, 0.2)',
+                  }}
                 />
               )
             })}
@@ -211,6 +218,6 @@ export default function ContentPackagePage() {
         message="发布提示"
         description="复制文字后打开小红书创作者中心粘贴；图片用「批量下载」解压上传。发完后点「标记已发布」。"
       />
-    </Space>
+    </div>
   )
 }

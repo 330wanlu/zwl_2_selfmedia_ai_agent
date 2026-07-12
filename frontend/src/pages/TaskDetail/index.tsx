@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Alert, Button, Card, Modal, Space, Spin, Steps, Tag, Typography, message } from 'antd'
+import { Alert, Button, Card, Modal, Space, Steps, Tag, message } from 'antd'
 import { ArrowLeftOutlined, GiftOutlined, StopOutlined } from '@ant-design/icons'
 import { Link, useParams } from 'react-router-dom'
 import { cancelTask } from '../../api/tasks'
@@ -21,8 +21,9 @@ export default function TaskDetailPage() {
 
   if (loading && !task) {
     return (
-      <div style={{ textAlign: 'center', padding: 80 }}>
-        <Spin size="large" tip="加载任务…" />
+      <div className="loading-screen">
+        <div className="loading-screen__orb" />
+        <div>加载任务…</div>
       </div>
     )
   }
@@ -73,18 +74,30 @@ export default function TaskDetailPage() {
   }
 
   return (
-    <Space direction="vertical" size={20} style={{ width: '100%' }}>
-      <Space style={{ width: '100%', justifyContent: 'space-between' }} wrap>
-        <Space>
+    <div className="stack">
+      <div className="row-between">
+        <div className="row">
           <Link to="/tasks">
             <Button icon={<ArrowLeftOutlined />}>返回列表</Button>
           </Link>
-          <Typography.Title level={3} style={{ margin: 0 }}>
-            任务详情
-          </Typography.Title>
+          <div>
+            <div className="page-hero__eyebrow" style={{ marginBottom: 4 }}>
+              Task Control
+            </div>
+            <h1 className="page-hero__title" style={{ fontSize: 26, margin: 0 }}>
+              任务详情
+            </h1>
+          </div>
           <Tag color={meta.color}>{meta.label}</Tag>
-          {busy && <Tag color="blue">执行中…</Tag>}
-        </Space>
+          {busy && (
+            <Tag color="processing">
+              <span className="busy-badge">
+                <span className="busy-badge__ring" />
+                执行中…
+              </span>
+            </Tag>
+          )}
+        </div>
         <Space>
           {task.status === 'running' && (
             <Button
@@ -104,14 +117,12 @@ export default function TaskDetailPage() {
             </Link>
           )}
         </Space>
-      </Space>
+      </div>
 
-      <Card size="small">
-        <Typography.Text type="secondary">内容方向</Typography.Text>
-        <Typography.Paragraph style={{ marginBottom: 0, fontSize: 16 }}>
-          {task.direction}
-        </Typography.Paragraph>
-      </Card>
+      <div className="glass-panel direction-banner">
+        <div className="direction-banner__label">内容方向</div>
+        <p className="direction-banner__text">{task.direction}</p>
+      </div>
 
       <Card size="small" title="流水线进度">
         <Steps
@@ -165,6 +176,6 @@ export default function TaskDetailPage() {
       {!busy && !pendingType && task.status === 'running' && (
         <Alert type="warning" showIcon message="等待工作流状态同步，请稍候自动刷新" />
       )}
-    </Space>
+    </div>
   )
 }

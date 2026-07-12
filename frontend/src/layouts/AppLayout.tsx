@@ -1,44 +1,46 @@
-import { Layout, Menu, Typography } from 'antd'
 import { UnorderedListOutlined } from '@ant-design/icons'
 import { Link, Outlet, useLocation } from 'react-router-dom'
 
-const { Header, Content } = Layout
-
 export default function AppLayout() {
   const location = useLocation()
-  const selected = location.pathname.startsWith('/tasks') ? ['tasks'] : ['tasks']
+  const isTasks = location.pathname.startsWith('/tasks')
 
   return (
-    <Layout style={{ minHeight: '100vh', background: '#f5f6f8' }}>
-      <Header
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 24,
-          background: '#14181f',
-          padding: '0 24px',
-        }}
-      >
-        <Typography.Title level={4} style={{ color: '#fff', margin: 0, whiteSpace: 'nowrap' }}>
-          美妆内容 Agent
-        </Typography.Title>
-        <Menu
-          theme="dark"
-          mode="horizontal"
-          selectedKeys={selected}
-          style={{ flex: 1, minWidth: 0, background: 'transparent' }}
-          items={[
-            {
-              key: 'tasks',
-              icon: <UnorderedListOutlined />,
-              label: <Link to="/tasks">任务列表</Link>,
-            },
-          ]}
-        />
-      </Header>
-      <Content style={{ padding: '24px 32px', maxWidth: 1100, margin: '0 auto', width: '100%' }}>
-        <Outlet />
-      </Content>
-    </Layout>
+    <div className="app-shell">
+      <div className="app-shell__bg" aria-hidden />
+      <div className="app-shell__grid" aria-hidden />
+      <div className="app-shell__scan" aria-hidden />
+
+      <div className="app-shell__content">
+        <header className="tech-header">
+          <Link to="/tasks" className="tech-brand">
+            <div className="tech-brand__mark">
+              <span className="tech-brand__glyph" />
+            </div>
+            <div className="tech-brand__text">
+              <span className="tech-brand__name">Beauty Agent</span>
+              <span className="tech-brand__sub">美妆内容流水线</span>
+            </div>
+          </Link>
+
+          <Link
+            to="/tasks"
+            className={`tech-nav-link${isTasks ? ' is-active' : ''}`}
+          >
+            <UnorderedListOutlined />
+            任务列表
+          </Link>
+
+          <div className="tech-header__status">
+            <span className="tech-header__dot" />
+            SYSTEM ONLINE
+          </div>
+        </header>
+
+        <main className="tech-main">
+          <Outlet />
+        </main>
+      </div>
+    </div>
   )
 }

@@ -57,14 +57,16 @@ export default function TopicPanel({ taskId, pending, disabled, onSubmitted }: P
             <Card
               key={t.id}
               size="small"
-              style={{
-                borderColor: selected === t.id ? '#1677ff' : undefined,
-                background: selected === t.id ? '#f0f5ff' : undefined,
+              className={`topic-option${selected === t.id ? ' is-selected' : ''}`}
+              onClick={() => {
+                if (!(disabled || submitting)) setSelected(t.id)
               }}
             >
               <Radio value={t.id} style={{ width: '100%', whiteSpace: 'normal' }}>
-                <Typography.Text strong>{t.title}</Typography.Text>
-                <div style={{ marginTop: 6, color: '#595959' }}>{t.angle}</div>
+                <Typography.Text strong style={{ color: '#e8eef8' }}>
+                  {t.title}
+                </Typography.Text>
+                <div style={{ marginTop: 6, color: '#8b9bb4' }}>{t.angle}</div>
                 <Typography.Text type="secondary" style={{ fontSize: 12 }}>
                   人群：{t.target_audience}
                 </Typography.Text>

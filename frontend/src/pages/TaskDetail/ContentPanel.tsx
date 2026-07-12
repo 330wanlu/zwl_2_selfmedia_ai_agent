@@ -43,23 +43,14 @@ export default function ContentPanel({ taskId, pending, disabled, onSubmitted }:
 
   return (
     <Card title={`文案审核（v${pending.version}）`} size="small">
-      <Typography.Paragraph
-        style={{
-          whiteSpace: 'pre-wrap',
-          background: '#fafafa',
-          padding: 16,
-          borderRadius: 8,
-          maxHeight: 420,
-          overflow: 'auto',
-        }}
-      >
+      <Typography.Paragraph className="content-preview" style={{ marginBottom: 16 }}>
         {pending.content}
       </Typography.Paragraph>
 
       {pending.feedback_history?.length > 0 && (
         <div style={{ marginBottom: 12 }}>
           <Typography.Text type="secondary">历史修改意见：</Typography.Text>
-          <ul style={{ margin: '8px 0 0', paddingLeft: 20 }}>
+          <ul style={{ margin: '8px 0 0', paddingLeft: 20, color: '#8b9bb4' }}>
             {pending.feedback_history.map((f, i) => (
               <li key={i}>{f}</li>
             ))}

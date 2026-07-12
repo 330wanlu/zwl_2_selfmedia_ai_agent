@@ -7,10 +7,9 @@ import {
   Space,
   Table,
   Tag,
-  Typography,
   message,
 } from 'antd'
-import { PlusOutlined, ReloadOutlined } from '@ant-design/icons'
+import { PlusOutlined, ReloadOutlined, ThunderboltOutlined } from '@ant-design/icons'
 import { Link, useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 import { createTask, listTasks } from '../../api/tasks'
@@ -56,17 +55,24 @@ export default function TaskListPage() {
   }
 
   return (
-    <Space direction="vertical" size={20} style={{ width: '100%' }}>
-      <div>
-        <Typography.Title level={3} style={{ marginBottom: 4 }}>
-          任务列表
-        </Typography.Title>
-        <Typography.Text type="secondary">
-          输入内容方向，走完选题 → 文案 → 出图 → 小红书内容包
-        </Typography.Text>
+    <div className="stack">
+      <div className="page-hero">
+        <div className="page-hero__eyebrow">Content Pipeline</div>
+        <h1 className="page-hero__title">任务列表</h1>
+        <p className="page-hero__desc">
+          输入内容方向，AI 自动走完选题 → 文案 → 出图 → 小红书内容包，人工在关键节点拍板。
+        </p>
       </div>
 
-      <Card title="创建任务" size="small">
+      <Card
+        title={
+          <span>
+            <ThunderboltOutlined style={{ marginRight: 8, color: '#00e5c8' }} />
+            创建任务
+          </span>
+        }
+        size="small"
+      >
         <Form form={form} layout="vertical" onFinish={onCreate}>
           <Form.Item
             name="direction"
@@ -139,6 +145,6 @@ export default function TaskListPage() {
           ]}
         />
       </Card>
-    </Space>
+    </div>
   )
 }
