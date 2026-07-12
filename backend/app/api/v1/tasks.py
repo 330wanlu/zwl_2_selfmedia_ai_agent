@@ -105,3 +105,19 @@ async def get_platform_contents(
         "published_at": record.published_at,
         "content_package": record.content_package,
     }
+
+
+@router.post("/{task_id}/cancel", response_model=TaskBrief)
+async def cancel_task(task_id: uuid.UUID, session: AsyncSession = Depends(get_session)):
+    """取消未完成任务：停止后台执行，之后不能再提交决策。"""
+    task = await get_task_or_404(task_id, session)
+    if task.status in ("completed", "cancelled"):
+        raise HTTPException(
+            status_code=409, detail=f"任务已是 {task.status}，无需取消"
+        )
+    task.status = "cancelled"
+    task.current_stage = "cancelled"
+    await session.commit()
+    await session.refresh(task)
+    workflow_service.cancel_background_run(task.thread_id)
+    return task

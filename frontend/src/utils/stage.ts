@@ -22,6 +22,9 @@ const STAGE_MAP: Record<string, StageMeta> = {
 }
 
 export function getStageMeta(stage: string, status?: string): StageMeta {
+  if (status === 'cancelled' || stage === 'cancelled') {
+    return { label: '已取消', color: 'default', step: -1, waiting: false }
+  }
   if (status === 'failed' || stage === 'failed') {
     return STAGE_MAP.failed
   }

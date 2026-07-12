@@ -28,9 +28,19 @@ async def _run_graph(task_id: uuid.UUID, thread_id: str, payload: Any) -> None:
     """后台执行图直到 END 或下一个 interrupt。payload 为初始 State 或 Command。"""
     try:
         await get_graph().ainvoke(payload, config=_thread_config(thread_id))
+    except asyncio.CancelledError:
+        logger.info("任务 %s 后台工作流被取消", task_id)
+        raise
     except Exception:
         logger.exception("任务 %s 工作流执行失败", task_id)
         try:
+            from app.core.database import async_session_factory
+            from app.models.task import Task
+
+            async with async_session_factory() as session:
+                row = await session.get(Task, task_id)
+                if row is not None and row.status == "cancelled":
+                    return
             await db_ops.set_task_stage(task_id, "failed", status="failed")
         except Exception:
             logger.exception("标记任务失败状态时出错")
@@ -61,6 +71,15 @@ def resume_workflow(task_id: uuid.UUID, thread_id: str, decision: dict) -> None:
 def is_running(thread_id: str) -> bool:
     task = _running_tasks.get(thread_id)
     return task is not None and not task.done()
+
+
+def cancel_background_run(thread_id: str) -> bool:
+    """取消正在执行的后台 ainvoke（若有）。返回是否发出了 cancel。"""
+    task = _running_tasks.get(thread_id)
+    if task is None or task.done():
+        return False
+    task.cancel()
+    return True
 
 
 async def get_pending_interrupt(thread_id: str) -> dict | None:

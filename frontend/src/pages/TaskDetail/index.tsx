@@ -1,6 +1,8 @@
-import { Alert, Button, Card, Space, Spin, Steps, Tag, Typography } from 'antd'
-import { ArrowLeftOutlined, GiftOutlined } from '@ant-design/icons'
+import { useState } from 'react'
+import { Alert, Button, Card, Modal, Space, Spin, Steps, Tag, Typography, message } from 'antd'
+import { ArrowLeftOutlined, GiftOutlined, StopOutlined } from '@ant-design/icons'
 import { Link, useParams } from 'react-router-dom'
+import { cancelTask } from '../../api/tasks'
 import { useTaskPolling } from '../../hooks/useTaskPolling'
 import { getStageMeta, PIPELINE_STEPS } from '../../utils/stage'
 import type {
@@ -15,6 +17,7 @@ import ImagePanel from './ImagePanel'
 export default function TaskDetailPage() {
   const { taskId } = useParams<{ taskId: string }>()
   const { task, loading, error, refresh } = useTaskPolling(taskId)
+  const [cancelling, setCancelling] = useState(false)
 
   if (loading && !task) {
     return (
@@ -41,7 +44,33 @@ export default function TaskDetailPage() {
 
   const busy = task.running
   const stepStatus =
-    task.status === 'failed' ? 'error' : task.status === 'completed' ? 'finish' : 'process'
+    task.status === 'failed'
+      ? 'error'
+      : task.status === 'completed'
+        ? 'finish'
+        : task.status === 'cancelled'
+          ? 'error'
+          : 'process'
+
+  const onCancel = () => {
+    Modal.confirm({
+      title: '确认取消该任务？',
+      content: '取消后不能继续选题/审文案/审图片，需重新创建任务。',
+      okText: '确认取消',
+      okButtonProps: { danger: true },
+      cancelText: '返回',
+      onOk: async () => {
+        setCancelling(true)
+        try {
+          await cancelTask(task.id)
+          message.success('任务已取消')
+          await refresh()
+        } finally {
+          setCancelling(false)
+        }
+      },
+    })
+  }
 
   return (
     <Space direction="vertical" size={20} style={{ width: '100%' }}>
@@ -56,13 +85,25 @@ export default function TaskDetailPage() {
           <Tag color={meta.color}>{meta.label}</Tag>
           {busy && <Tag color="blue">执行中…</Tag>}
         </Space>
-        {task.status === 'completed' && (
-          <Link to={`/tasks/${task.id}/package`}>
-            <Button type="primary" icon={<GiftOutlined />}>
-              查看内容包
+        <Space>
+          {task.status === 'running' && (
+            <Button
+              danger
+              icon={<StopOutlined />}
+              loading={cancelling}
+              onClick={onCancel}
+            >
+              取消任务
             </Button>
-          </Link>
-        )}
+          )}
+          {task.status === 'completed' && (
+            <Link to={`/tasks/${task.id}/package`}>
+              <Button type="primary" icon={<GiftOutlined />}>
+                查看内容包
+              </Button>
+            </Link>
+          )}
+        </Space>
       </Space>
 
       <Card size="small">
@@ -89,9 +130,12 @@ export default function TaskDetailPage() {
         {task.status === 'failed' && (
           <Alert style={{ marginTop: 16 }} type="error" showIcon message="任务执行失败" />
         )}
+        {task.status === 'cancelled' && (
+          <Alert style={{ marginTop: 16 }} type="warning" showIcon message="任务已取消" />
+        )}
       </Card>
 
-      {pendingType === 'topic_selection' && (
+      {task.status === 'running' && pendingType === 'topic_selection' && (
         <TopicPanel
           taskId={task.id}
           pending={pending as TopicPending}
@@ -100,7 +144,7 @@ export default function TaskDetailPage() {
         />
       )}
 
-      {pendingType === 'content_review' && (
+      {task.status === 'running' && pendingType === 'content_review' && (
         <ContentPanel
           taskId={task.id}
           pending={pending as ContentPending}
@@ -109,7 +153,7 @@ export default function TaskDetailPage() {
         />
       )}
 
-      {pendingType === 'image_review' && (
+      {task.status === 'running' && pendingType === 'image_review' && (
         <ImagePanel
           taskId={task.id}
           pending={pending as ImagePending}

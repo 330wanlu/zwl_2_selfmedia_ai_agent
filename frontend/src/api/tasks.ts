@@ -15,6 +15,11 @@ export async function createTask(direction: string): Promise<TaskBrief> {
   return data
 }
 
+export async function cancelTask(taskId: string): Promise<TaskBrief> {
+  const { data } = await api.post<TaskBrief>(`/api/v1/tasks/${taskId}/cancel`)
+  return data
+}
+
 export async function getTask(taskId: string): Promise<TaskDetail> {
   const { data } = await api.get<TaskDetail>(`/api/v1/tasks/${taskId}`)
   return data
