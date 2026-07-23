@@ -1,6 +1,6 @@
 """阶段 1 自测：里程碑 A（选题流程）+ 里程碑 B（文案审核循环）。
 
-前置：后端已启动（uv run uvicorn app.main:app --reload --port 8000）
+前置：后端已启动（uv run uvicorn app.main:app --reload --port 8001）
 用法: uv run python scripts/test_stage1_ab.py
 详细日志写入 scripts/out/test_ab.log（UTF-8），控制台只打 ASCII 摘要。
 """
@@ -12,7 +12,7 @@ from pathlib import Path
 
 import httpx
 
-BASE = "http://127.0.0.1:8000"
+BASE = "http://127.0.0.1:8001"
 OUT = Path(__file__).parent / "out"
 OUT.mkdir(exist_ok=True)
 LOG = OUT / "test_ab.log"

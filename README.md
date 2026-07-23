@@ -99,22 +99,22 @@ uv sync
 uv run python scripts/create_db.py          # 若库已存在可跳过
 uv run alembic upgrade head                 # 业务表迁移
 uv run python scripts/setup_checkpointer.py  # LangGraph checkpoint 表
-uv run uvicorn app.main:app --reload --reload-dir app --port 8000
+uv run uvicorn app.main:app --reload --reload-dir app --port 8001
 ```
 
-- 健康检查：http://127.0.0.1:8000/health  
-- Swagger：http://127.0.0.1:8000/docs  
+- 健康检查：http://127.0.0.1:8001/health  
+- Swagger：http://127.0.0.1:8001/docs  
 
 ### 2. 前端
 
 ```powershell
 cd frontend
 npm install
-npm run dev -- --host 127.0.0.1 --port 5173
+npm run dev -- --host 127.0.0.1 --port 5174
 ```
 
-- 运营页：http://127.0.0.1:5173  
-- 开发期 Vite 已代理 `/api`、`/images` → `:8000`，一般无需配前端 `.env`。
+- 运营页：http://127.0.0.1:5174  
+- 开发期 Vite 已代理 `/api`、`/images` → `:8001`，一般无需配前端 `.env`。
 
 ### 3. `.env` 关键项说明
 
@@ -130,7 +130,7 @@ npm run dev -- --host 127.0.0.1 --port 5173
 
 ## 运营人员怎么用（前端）
 
-1. 打开 http://127.0.0.1:5173/tasks  
+1. 打开 http://127.0.0.1:5174/tasks  
 2. 输入内容方向 →「创建并开始」→ 进入详情页（约 3 秒自动刷新）  
 3. **选题**：单选卡片 →「确认选题」（或换一批）  
 4. **文案**：阅读正文 →「通过」，或填意见「提交修改意见并重写」  

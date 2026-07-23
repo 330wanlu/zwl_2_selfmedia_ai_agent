@@ -8,7 +8,7 @@ import httpx
 
 task_id, stage = sys.argv[1], sys.argv[2]
 timeout = int(sys.argv[3]) if len(sys.argv) > 3 else 600
-BASE = "http://127.0.0.1:8000"
+BASE = "http://127.0.0.1:8001"
 
 start = time.time()
 while time.time() - start < timeout:

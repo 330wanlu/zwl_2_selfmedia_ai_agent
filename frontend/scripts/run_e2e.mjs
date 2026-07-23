@@ -1,7 +1,7 @@
 /**
  * 阶段 3 前端 E2E：运营人员不经 Swagger，在页面上走完全流程。
  *
- * 前置：后端 :8000、前端 :5173 已启动
+ * 前置：后端 :8001、前端 :5174 已启动
  * 用法（frontend 目录）:
  *   npm run test:e2e
  *   # 从挂起任务续跑（省额度）:
@@ -20,7 +20,7 @@ const OUT = path.join(__dirname, 'out')
 fs.mkdirSync(OUT, { recursive: true })
 const LOG = path.join(OUT, 'stage3_e2e.log')
 
-const FRONT = process.env.FRONT_URL || 'http://127.0.0.1:5173'
+const FRONT = process.env.FRONT_URL || 'http://127.0.0.1:5174'
 const DIRECTION = process.env.E2E_DIRECTION || '平价口红试色推荐'
 const RESUME_TASK_ID = process.env.RESUME_TASK_ID || ''
 const RESUME_FROM = process.env.RESUME_FROM || 'start'

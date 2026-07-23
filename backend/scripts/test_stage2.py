@@ -20,7 +20,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from app.config import settings
 
-BASE = "http://127.0.0.1:8000"
+BASE = "http://127.0.0.1:8001"
 OUT = Path(__file__).parent / "out"
 OUT.mkdir(exist_ok=True)
 LOG = OUT / "test_stage2.log"

@@ -23,7 +23,7 @@ from pathlib import Path
 
 import httpx
 
-BASE = "http://127.0.0.1:8000"
+BASE = "http://127.0.0.1:8001"
 OUT = Path(__file__).parent / "out"
 OUT.mkdir(exist_ok=True)
 LOG = OUT / "test_stage4.log"
